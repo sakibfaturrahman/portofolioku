@@ -1,36 +1,36 @@
-/* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
+
 particlesJS.load("particles-js", "assets/particles.json", function () {
   console.log("callback - particles.js config loaded");
 });
 
-/* ============= counter number animation ================ */
+/* ============= animasi nomor ================ */
 function animate(obj, initVal, lastVal, duration) {
   let startTime = null;
 
-  //get the current timestamp and assign it to the currentTime variable
+  //get waktu hari ini - paste ke variabel
   let currentTime = Date.now();
 
-  //pass the current timestamp to the step function
+  //terapkan ke function
   const step = (currentTime) => {
-    //if the start time is null, assign the current time to startTime
+    //jika waktu mulai adalah nol, tetapkan waktu saat ini ke startTime
     if (!startTime) {
       startTime = currentTime;
     }
 
-    //calculate the value to be used in calculating the number to be displayed
+    //menghitung nilai yang akan digunakan dalam menghitung angka yang akan ditampilkan
     const progress = Math.min((currentTime - startTime) / duration, 1);
 
-    //calculate what to be displayed using the value gotten above
+    //hitung apa yang akan ditampilkan menggunakan nilai yang didapat di atas
     obj.innerHTML = Math.floor(progress * (lastVal - initVal) + initVal);
 
-    //checking to make sure the counter does not exceed the last value (lastVal)
+    //memeriksa untuk memastikan penghitung tidak melebihi nilai terakhir (lastVal)
     if (progress < 1) {
       window.requestAnimationFrame(step);
     } else {
       window.cancelAnimationFrame(window.requestAnimationFrame(step));
     }
   };
-  //start animating
+  //mulai animasi
   window.requestAnimationFrame(step);
 }
 let text1 = document.getElementById("year");
@@ -62,7 +62,7 @@ function activefilter() {
 
 tabfilter.forEach((l) => l.addEventListener("click", activefilter));
 
-// Animation skills progress
+// Animasi progres 
 let span = $(".progress-bar span").each(function () {
   $(this).animate(
     {
@@ -73,6 +73,65 @@ let span = $(".progress-bar span").each(function () {
 });
 
 $(".resume").scroll(span);
+
+//modal popup
+const portfolioItems = document.querySelectorAll('.portfolio-item');
+const modal = document.getElementById('myModal');
+const modalVideo = document.getElementById('modalVideo');
+const modalDescription = document.getElementById('modalDescription');
+const overlay = document.querySelector('.overlay');
+let currentMediaType = '';
+
+portfolioItems.forEach(item => {
+    item.addEventListener('click', function () {
+        const mediaType = this.dataset.mediaType;
+        const mediaSource = this.dataset.mediaSource;
+        const description = this.dataset.description; // Mendapatkan deskripsi dari atribut dataset
+        openModal(mediaType, mediaSource, description);
+    });
+});
+
+//modal popup
+function openModal(mediaType, mediaSource, description) {
+    modal.style.display = 'block';
+    overlay.style.display = 'block';
+
+    if (mediaType === 'image') {
+        document.querySelector('.media-container video').style.display = 'none';
+        document.querySelector('.media-container img').style.display = 'block';
+        document.querySelector('.media-container img').src = mediaSource;
+    } else if (mediaType === 'video') {
+        document.querySelector('.media-container img').style.display = 'none';
+        document.querySelector('.media-container video').style.display = 'block';
+        modalVideo.src = mediaSource;
+        modalVideo.play();
+    }
+
+    modalDescription.textContent = description; // Menetapkan teks deskripsi
+    currentMediaType = mediaType;
+    document.body.classList.add('modal-open');
+}
+
+function closeModal() {
+  document.body.classList.remove('modal-open');
+
+  // Menambahkan kelas animasi fade out ke modal
+  modal.classList.add('fade-out-modal');
+
+  // Setelah animasi selesai, atur kembali propertinya
+  modal.addEventListener('animationend', function () {
+      modal.style.display = 'none';
+      overlay.style.display = 'none';
+      modal.classList.remove('fade-out-modal');
+  }, { once: true });
+
+  if (currentMediaType === 'video') {
+      modalVideo.pause();
+      modalVideo.src = ''; // Menghentikan dan mengosongkan sumber video
+  }
+}
+
+
 
 /* ============ SCROLL SECTIONS ACTIVE LINK ============= */
 let sections = document.querySelectorAll("section[id]");
@@ -152,9 +211,9 @@ function textActive() {
 cardsTest.forEach((card) => card.addEventListener("click", textActive));
 
 
-// Typed.js ==========
+// Typed.js main portofolio ==========
 var typed = new Typed("#typed", {
-  strings: ["Backend Developer", "Videographer", "Photographer"],
+  strings: ["Backend Developer", "Videographer"],
   typeSpeed: 70,
   backSpeed: 100,
   backDelay: 700,
