@@ -1,4 +1,3 @@
-
 particlesJS.load("particles-js", "assets/particles.json", function () {
   console.log("callback - particles.js config loaded");
 });
@@ -62,7 +61,7 @@ function activefilter() {
 
 tabfilter.forEach((l) => l.addEventListener("click", activefilter));
 
-// Animasi progres 
+// Animasi progres
 let span = $(".progress-bar span").each(function () {
   $(this).animate(
     {
@@ -74,64 +73,75 @@ let span = $(".progress-bar span").each(function () {
 
 $(".resume").scroll(span);
 
-//modal popup
-const portfolioItems = document.querySelectorAll('.portfolio-item');
-const modal = document.getElementById('myModal');
-const modalVideo = document.getElementById('modalVideo');
-const modalDescription = document.getElementById('modalDescription');
-const overlay = document.querySelector('.overlay');
-let currentMediaType = '';
+/* ============ modal pop up ============= */
+const portfolioItems = document.querySelectorAll(".portfolio-item");
+const modal = document.getElementById("myModal");
+const mediaContainer = document.querySelector(".carousel-images");
+const modalDescription = document.getElementById("modalDescription");
+let currentSlide = 0;
+let totalSlides = 0;
+let images = [];
 
-portfolioItems.forEach(item => {
-    item.addEventListener('click', function () {
-        const mediaType = this.dataset.mediaType;
-        const mediaSource = this.dataset.mediaSource;
-        const description = this.dataset.description; // Mendapatkan deskripsi dari atribut dataset
-        openModal(mediaType, mediaSource, description);
-    });
+portfolioItems.forEach((item) => {
+  item.addEventListener("click", function () {
+    const imgSrc = this.querySelector("img").src;
+    const description = this.querySelector(".description").dataset.description;
+    // Mengambil semua gambar dalam modal
+    images = [imgSrc];
+    openModal(images, description);
+  });
 });
 
-//modal popup
-function openModal(mediaType, mediaSource, description) {
-    modal.style.display = 'block';
-    overlay.style.display = 'block';
+function openModal(imageArray, description) {
+  mediaContainer.innerHTML = "";
 
-    if (mediaType === 'image') {
-        document.querySelector('.media-container video').style.display = 'none';
-        document.querySelector('.media-container img').style.display = 'block';
-        document.querySelector('.media-container img').src = mediaSource;
-    } else if (mediaType === 'video') {
-        document.querySelector('.media-container img').style.display = 'none';
-        document.querySelector('.media-container video').style.display = 'block';
-        modalVideo.src = mediaSource;
-        modalVideo.play();
-    }
+  // Mengisi slider dengan gambar
+  imageArray.forEach((src) => {
+    const img = document.createElement("img");
+    img.src = src.trim();
+    mediaContainer.appendChild(img);
+  });
 
-    modalDescription.textContent = description; // Menetapkan teks deskripsi
-    currentMediaType = mediaType;
-    document.body.classList.add('modal-open');
+  totalSlides = imageArray.length;
+  currentSlide = 0;
+  updateSlidePosition();
+
+  modalDescription.textContent = description;
+
+  modal.style.display = "block";
+  document.body.classList.add("modal-open");
 }
 
 function closeModal() {
-  document.body.classList.remove('modal-open');
-
-  // Menambahkan kelas animasi fade out ke modal
-  modal.classList.add('fade-out-modal');
-
-  // Setelah animasi selesai, atur kembali propertinya
-  modal.addEventListener('animationend', function () {
-      modal.style.display = 'none';
-      overlay.style.display = 'none';
-      modal.classList.remove('fade-out-modal');
-  }, { once: true });
-
-  if (currentMediaType === 'video') {
-      modalVideo.pause();
-      modalVideo.src = ''; // Menghentikan dan mengosongkan sumber video
-  }
+  modal.style.display = "none";
+  document.body.classList.remove("modal-open");
 }
 
+function changeSlide(direction) {
+  currentSlide += direction;
 
+  if (currentSlide < 0) {
+    currentSlide = totalSlides - 1;
+  } else if (currentSlide >= totalSlides) {
+    currentSlide = 0;
+  }
+
+  updateSlidePosition();
+}
+
+function updateSlidePosition() {
+  mediaContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+}
+
+// Close modal when clicking outside of the modal content
+document.querySelector(".modal-overlay").addEventListener("click", closeModal);
+
+// Close modal when pressing 'Esc' key
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") {
+    closeModal();
+  }
+});
 
 /* ============ SCROLL SECTIONS ACTIVE LINK ============= */
 let sections = document.querySelectorAll("section[id]");
@@ -167,7 +177,7 @@ function scrollResume() {
 
   resumeItem.forEach((item) => {
     const sectionHeight = item.offsetHeight;
-    const sectionTop = item.offsetTop + 2600;
+    const sectionTop = item.offsetTop + 2000;
 
     resumeId = item.getAttribute("id");
 
@@ -210,20 +220,19 @@ function textActive() {
 
 cardsTest.forEach((card) => card.addEventListener("click", textActive));
 
-
 // Typed.js main portofolio ==========
 var typed = new Typed("#typed", {
-  strings: ["Backend Developer", "Videographer"],
+  strings: ["Web Developer", "Backend Developer"],
   typeSpeed: 70,
   backSpeed: 100,
   backDelay: 700,
   loop: true,
 });
 
-// menu bar 
+// menu bar
 let menuBar = document.querySelector(".menu-bar");
 let navMenu = document.querySelector(".nav-menu");
 
-menuBar.addEventListener('click', () => {
-  navMenu.classList.toggle('menu-active');
-})
+menuBar.addEventListener("click", () => {
+  navMenu.classList.toggle("menu-active");
+});
